@@ -8,13 +8,6 @@ const logger = q.logger;
 
 const serviceUrl = 'http://mysupport.mojohelpdesk.com/api/tickets?access_key=98d98ea4bf8495561dea27b8a45e83c5bbf53c16';
 
-// const ModeEnum = Object.freeze({
-//   CPU: 'cpu',
-//   FREE_MEM: 'freemem',
-//   AVERAGE_LOAD: 'avg1',
-//   NVIDIA_GPU: 'nvidiaGpu',
-// });
-
 class MojoHelpdesk extends q.DesktopApp {
   constructor() {
     super();
