@@ -1,0 +1,79 @@
+{
+  "name": "daskeyboard-applet--mojo-helpdesk",
+  "displayName": "Mojo Helpdesk",
+  "version": "1.0.0",
+  "description": "Displays account activity.",
+  "longDescription": "Keep an eye on the ticket activity on your Q keyboard!",
+  "officialProductName": "Mojo Helpdesk",
+  "appUrl": "",
+  "isSingleton": false,
+  "videoUrl": "",
+  "icon": "assets/icon.png",
+  "image": "assets/image-missing.png",
+  "publisher": "Das Keyboard",
+  "authorName": "Das Keyboard",
+  "authorUrl": "https://twitter.com/daskeyboard",
+  "issuesUrl": "https://github.com/daskeyboard/daskeyboard-applet--mojo-helpdesk/issues",
+  "homePageUrl": "https://github.com/daskeyboard/daskeyboard-applet--mojo-helpdesk",
+  "developerRepoUrl": "https://github.com/daskeyboard/daskeyboard-applet--mojo-helpdesk",
+  "licenseUrl": "http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt",
+  "changelogUrl": "CHANGELOG.md",
+  "license": "MIT",
+  "readMeUrl": "README.md",
+  "readMeEndUserUrl": "README_ENDUSER.md",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "engines": {
+    "das-keyboard-q": "3.0.0"
+  },
+  "dependencies": {
+    "daskeyboard-applet": "^2.11.4",
+    "mocha": "^5.2.0",
+    "request": "^2.88.0"
+  },
+  "qConfig": {
+    "geometry": {
+      "width": 1,
+      "height": 1,
+      "defaults": {
+        "origin": {
+          "x": 0,
+          "y": 1
+        }
+      }
+    },
+    "authorization": {
+      "type": "apiKey",
+      "hint": "Login or signup to get your API key",
+      "supportUrl": "https://daskeyboard.mojohelpdesk.com/ma/#/staff_profile/edit"
+    },
+    "questions": [
+      {
+        "key": "option",
+        "label": "What do you want?",
+        "help": "You can select what you want to be aware.",
+        "required": true,
+        "order": 1,
+        "controlType": "dropdown",
+        "value": "nut",
+        "options": [
+          {
+            "key": "nut",
+            "value": "New unassigned ticket"
+          },
+          {
+            "key": "nuut",
+            "value": "New unassigned urgent ticket"
+          },
+          {
+            "key": "ntatm",
+            "value": "New ticket assigned to me"
+          }
+        ]
+      }
+    ]
+  }
+}
