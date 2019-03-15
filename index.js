@@ -49,8 +49,6 @@ class MojoHelpdesk extends q.DesktopApp {
         break;
       case "ntatm":
         this.serviceUrl = baseUrl + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
-        // test
-        this.serviceUrl = 'https://daskeyboard.mojohelpdesk.com/api/tickets/search?query=priority.id:\(\%3C=20\)\&sf=created_on&r=1&access_key=98d98ea4bf8495561dea27b8a45e83c5bbf53c16'
         this.message = "New ticket assigned to me";
         break;
       default:
@@ -99,7 +97,7 @@ class MojoHelpdesk extends q.DesktopApp {
 
 
         if(isBodyEmpty){
-          
+
           logger.info("No new tickets.")
           signal = null;
 
