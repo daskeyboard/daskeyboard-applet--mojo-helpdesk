@@ -27,12 +27,11 @@ function isEmpty(obj) {
 
 
 class MojoHelpdesk extends q.DesktopApp {
+
   constructor() {
     super();
     // run every min
     this.pollingInterval = 60000;
-    this.serviceUrl = "";
-    this.message = "";
   }
 
   async applyConfig() {
@@ -41,13 +40,17 @@ class MojoHelpdesk extends q.DesktopApp {
       case "nuut":
         this.serviceUrl = baseUrl + 'priority.id:\(\%3C=20\)%20AND%20created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         this.message = "New unassigned urgent ticket";
+        this.url = 'https://daskeyboard.mojohelpdesk.com/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
         break;
       case "nut":
         this.serviceUrl = baseUrl + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         this.message = "New unassigned ticket";
+        this.url = 'https://daskeyboard.mojohelpdesk.com/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
         break;
       case "ntatm":
         this.serviceUrl = baseUrl + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        // test
+        this.serviceUrl = 'https://daskeyboard.mojohelpdesk.com/api/tickets/search?query=priority.id:\(\%3C=20\)\&sf=created_on&r=1&access_key=98d98ea4bf8495561dea27b8a45e83c5bbf53c16'
         this.message = "New ticket assigned to me";
         break;
       default:
@@ -67,7 +70,7 @@ class MojoHelpdesk extends q.DesktopApp {
         this.serviceUrl = baseUrl + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         break;
       case "ntatm":
-        this.serviceUrl = baseUrl + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        this.serviceUrl = baseUrl + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName.toLowerCase()+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         break;
       default:
         logger.error("Config issue.")
@@ -86,7 +89,7 @@ class MojoHelpdesk extends q.DesktopApp {
 
     return request.get({
         url: this.serviceUrl,
-        json: false
+        json: true
       }).then((body) => {
         logger.info("Looking for Mojo Helpdesk data");
         let signal;
@@ -96,17 +99,31 @@ class MojoHelpdesk extends q.DesktopApp {
 
 
         if(isBodyEmpty){
+          
           logger.info("No new tickets.")
           signal = null;
+
         }else{
-          console.log(JSON.stringify(body));
           logger.info("=====> New ticket available!")
+
+          for (let section of body) {
+            let ticket = section.ticket;
+
+            let assignedId = ticket.assigned_to_id;
+
+            if(this.config.option == "ntatm"){
+              this.url = `https://daskeyboard.mojohelpdesk.com/ma/#/tickets/search?sort_field=updated_on&assignee_id=${assignedId}&status_id=10,20,30,40&page=1`
+            }
+
+          }
+
+
           signal = new q.Signal({ 
             points:[[new q.Point(this.config.color,this.config.effect)]],
             name: "Mojo Helpdesk",
             message: this.message,
             link: {
-              url: 'https://daskeyboard.mojohelpdesk.com/ma/#/tickets/search',
+              url: this.url,
               label: 'Show in Mojo Helpdesk',
             }
           });
