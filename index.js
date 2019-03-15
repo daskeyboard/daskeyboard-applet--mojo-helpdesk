@@ -47,7 +47,7 @@ class MojoHelpdesk extends q.DesktopApp {
         this.message = "New unassigned ticket";
         break;
       case "ntatm":
-        this.serviceUrl = baseUrl + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        this.serviceUrl = baseUrl + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         this.message = "New ticket assigned to me";
         break;
       default:
@@ -67,7 +67,7 @@ class MojoHelpdesk extends q.DesktopApp {
         this.serviceUrl = baseUrl + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         break;
       case "ntatm":
-        this.serviceUrl = baseUrl + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        this.serviceUrl = baseUrl + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         break;
       default:
         logger.error("Config issue.")
