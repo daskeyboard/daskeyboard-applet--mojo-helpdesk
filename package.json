@@ -32,7 +32,8 @@
   "dependencies": {
     "daskeyboard-applet": "^2.11.4",
     "mocha": "^5.2.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "dateformat": "^3.0.3"
   },
   "qConfig": {
     "geometry": {
@@ -66,13 +67,41 @@
           },
           {
             "key": "nuut",
-            "value": "New unassigned urgent ticket"
+            "value": "New unassigned urgent or emergency ticket"
           },
           {
             "key": "ntatm",
             "value": "New ticket assigned to me"
           }
         ]
+      },
+      {
+        "key": "firstName",
+        "label": "What is your first name?",
+        "help": "Enter your first name (lowercase).",
+        "placeholder": "fabien",
+        "required": true,
+        "order": 2,
+        "controlType": "textbox",
+        "isArray": true
+      },
+      {
+        "key": "color",
+        "label": "Choose the color of the reminder",
+        "help": "",
+        "required": true,
+        "order": 3,
+        "controlType": "color",
+        "value": "#ff0000"
+      },
+      {
+        "key": "effect",
+        "label": "Choose the effect of the reminder",
+        "help": "",
+        "required": true,
+        "order": 4,
+        "controlType": "effect",
+        "value": "BLINK"
       }
     ]
   }
