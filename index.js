@@ -4,79 +4,121 @@ const q = require('daskeyboard-applet');
 // Library to send request to API
 const request = require('request-promise');
 
+var dateFormat = require('dateformat');
+
 const logger = q.logger;
 
-const serviceUrl = 'http://mysupport.mojohelpdesk.com/api/tickets?access_key=98d98ea4bf8495561dea27b8a45e83c5bbf53c16';
+const baseUrl = 'https://daskeyboard.mojohelpdesk.com/api/tickets/search?query=';
+
+function getUtcTime() {
+  console.log("let's get the date");
+  var now = new Date();
+  var utcTime = dateFormat(now, "isoUtcDateTime");
+  return utcTime;
+}
+
+function isEmpty(obj) {
+  for(var key in obj) {
+      if(obj.hasOwnProperty(key))
+          return false;
+  }
+  return true;
+}
+
 
 class MojoHelpdesk extends q.DesktopApp {
   constructor() {
     super();
     // run every min
     this.pollingInterval = 60000;
-    this.ticketNumberInitial = 0;
-    this.ticketNumber = 0;
+    this.serviceUrl = "";
+    this.message = "";
   }
 
   async applyConfig() {
-    // this.serviceHeaders = {
-    //   "Content-Type": "application/json",
-    //   "X-API-KEY": this.authorization.apiKey,
-    // }
-    logger.info("Initialisation. Let's count the initial number ticket.")
-    request.get({
-      url: serviceUrl,
-      json: true
-    }).then((body) => {
+    logger.info("Initialisation. Let's configure the url.")
+    switch(this.config.option){
+      case "nuut":
+        this.serviceUrl = baseUrl + 'priority.id:\(\%3C=20\)%20AND%20created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        this.message = "New unassigned urgent ticket";
+        break;
+      case "nut":
+        this.serviceUrl = baseUrl + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        this.message = "New unassigned ticket";
+        break;
+      case "ntatm":
+        this.serviceUrl = baseUrl + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        this.message = "New ticket assigned to me";
+        break;
+      default:
+        logger.error("Config issue.")
+    }
+    logger.info("serviceUrl AFTER CONFIG")
+    logger.info(this.serviceUrl)
+  }
 
-      // Count the number of intial ticket
-      for (let section of body) {
-        this.ticketNumberInitial = this.ticketNumberInitial + 1;
-      }
-      logger.info(`Got ${this.ticketNumberInitial} initial tickets.`)
-      
-    })
-    .catch(error => {
-      logger.error(
-        `Got error sending request to service: ${JSON.stringify(error)}`);
-      return q.Signal.error([
-        'The Mojo Helpdesk service returned an error. Please check your API key and account.',
-        `Detail: ${error.message}`]);
-    });
+  updateUrlWithRightTime(){
+    logger.info("Let's update the url with the right time.")
+    switch(this.config.option){
+      case "nuut":
+        this.serviceUrl = baseUrl + 'priority.id:\(\%3C=20\)%20AND%20created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        break;
+      case "nut":
+        this.serviceUrl = baseUrl + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        break;
+      case "ntatm":
+        this.serviceUrl = baseUrl + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        break;
+      default:
+        logger.error("Config issue.")
+    }
   }
 
   // call this function every pollingInterval
   async run() {
+
+    logger.info("Let's running.")
+    // this.wantedUrl = 'https://daskeyboard.mojohelpdesk.com/api/tickets/search?query=priority.id:\(\%3C=20\)%20AND%20created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key=98d98ea4bf8495561dea27b8a45e83c5bbf53c16'
+    // test
+    // this.wantedUrl = 'https://daskeyboard.mojohelpdesk.com/api/tickets/search?query=priority.id:\(\%3C=20\)%20AND%20created_on:[2007-06-09T22:46:21Z%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key=98d98ea4bf8495561dea27b8a45e83c5bbf53c16'
+
+    logger.info("Aimed url" + this.serviceUrl);
+
     return request.get({
-        url: serviceUrl,
-        json: true
+        url: this.serviceUrl,
+        json: false
       }).then((body) => {
         logger.info("Looking for Mojo Helpdesk data");
+        let signal;
 
-        // console.log(JSON.stringify(body));
+        // Test if there is something inside the response
+        var isBodyEmpty = isEmpty(body) || (body === "[]");
 
-        let color = '#00FF00';
-        let triggered = false;
-        let effects = "SET_COLOR";
+
+        if(isBodyEmpty){
+          logger.info("No new tickets.")
+          signal = null;
+        }else{
+          console.log(JSON.stringify(body));
+          logger.info("=====> New ticket available!")
+          signal = new q.Signal({ 
+            points:[[new q.Point(this.config.color,this.config.effect)]],
+            name: "Mojo Helpdesk",
+            message: this.message,
+            link: {
+              url: 'https://daskeyboard.mojohelpdesk.com/ma/#/tickets/search',
+              label: 'Show in Mojo Helpdesk',
+            }
+          });
+        }
+
+        this.updateUrlWithRightTime();
+
+        logger.info("serviceUrl AFTER UPDATE")
+        logger.info(this.serviceUrl)
+
+        return signal;
         
-        // extract the important values from the response
-        for (let section of body) {
-          let ticket = section.ticket;
-          logger.info(`For ticket ${ticket}`);
-
-          let ticketId = ticket.id;
-
-          this.ticketNumber = this.ticketNumber + 1;
-
-
-        }
-
-        if(this.ticketNumber != this.ticketNumberInitial){
-          logger.info("New ticket.")
-          // TO DO
-        }
-        this.ticketNumberInitial=this.ticketNumber;
-
-
       })
       .catch(error => {
         logger.error(
@@ -85,18 +127,6 @@ class MojoHelpdesk extends q.DesktopApp {
           'The Mojo Helpdesk service returned an error. Please check your API key and account.',
           `Detail: ${error.message}`]);
       });
-  }
-
-  generatePoints(percent) {
-    return [new q.Point(this.getColor(percent))];
-  }
-
-  getColor(percent) {
-    if (percent < 0 || percent > 1) {
-      return '#000000' // Black
-    } else {
-      return '#ffffff'
-    }
   }
 
 }
