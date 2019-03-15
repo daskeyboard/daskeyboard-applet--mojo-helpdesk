@@ -82,8 +82,7 @@
         "placeholder": "fabien",
         "required": true,
         "order": 2,
-        "controlType": "textbox",
-        "isArray": true
+        "controlType": "textbox"
       },
       {
         "key": "color",
