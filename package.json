@@ -2,7 +2,7 @@
   "name": "daskeyboard-applet--mojo-helpdesk",
   "displayName": "Mojo Helpdesk",
   "version": "1.0.0",
-  "description": "Displays account activity.",
+  "description": "Displays ticket activity.",
   "longDescription": "Keep an eye on the ticket activity on your Q keyboard!",
   "officialProductName": "Mojo Helpdesk",
   "appUrl": "",
