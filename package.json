@@ -48,8 +48,8 @@
     },
     "authorization": {
       "type": "apiKey",
-      "hint": "It can be found in your profile. Otherwise, signup to get your API key:",
-      "supportUrl": "https://signup.mojohelpdesk.com/signup/register/90?referer"
+      "hint": "Your Mojo Helpdesk API key can be found in your user profile.",
+      "supportUrl": "https://signup.mojohelpdesk.com/launchpad"
     },
     "questions": [
       {
