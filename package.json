@@ -48,8 +48,8 @@
     },
     "authorization": {
       "type": "apiKey",
-      "hint": "Login or signup to get your API key",
-      "supportUrl": "https://daskeyboard.mojohelpdesk.com/ma/#/staff_profile/edit"
+      "hint": "It can be found in your profile. Otherwise, signup to get your API key:",
+      "supportUrl": "https://signup.mojohelpdesk.com/signup/register/90?referer"
     },
     "questions": [
       {
