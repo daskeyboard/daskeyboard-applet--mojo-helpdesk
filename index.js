@@ -40,7 +40,7 @@ class MojoHelpdesk extends q.DesktopApp {
     logger.info("Initialisation.")
 
     request.get({
-      url: `https://app.mojohelpdesk.com/api/v3/helpdesk?access_key=${this.authorization.apiKey}`,
+      url: `https://app.mojohelpdesk.net/api/v3/helpdesk?access_key=${this.authorization.apiKey}`,
       json: true
     }).then((body) => {
       logger.info("Let's configure the domain name.");
@@ -75,6 +75,7 @@ class MojoHelpdesk extends q.DesktopApp {
       default:
         logger.error("Config issue.")
     }
+
     logger.info("serviceUrl AFTER CONFIG")
     logger.info(this.serviceUrl)
   }
@@ -98,21 +99,25 @@ class MojoHelpdesk extends q.DesktopApp {
 
   // call this function every pollingInterval
   async run() {
+    let signal;
 
-    logger.info("Let's running.")
+    logger.info("Let's running.");
+    // if the domain is defined
+    logger.info(this.domain);
+    if(typeof this.domain === 'undefined'){
+      logger.info("The domain name is undefined.")
+    }else{
 
-    logger.info("Aimed url: " + this.serviceUrl);
+      logger.info("Aimed url: " + this.serviceUrl);
 
-    return request.get({
+      return request.get({
         url: this.serviceUrl,
         json: true
       }).then((body) => {
         logger.info("Looking for Mojo Helpdesk data");
-        let signal;
 
         // Test if there is something inside the response
         var isBodyEmpty = isEmpty(body) || (body === "[]");
-
 
         if(isBodyEmpty){
 
@@ -124,7 +129,6 @@ class MojoHelpdesk extends q.DesktopApp {
 
           for (let section of body) {
             let ticket = section.ticket;
-
             let assignedId = ticket.assigned_to_id;
 
             if(this.config.option == "ntatm"){
@@ -132,7 +136,6 @@ class MojoHelpdesk extends q.DesktopApp {
             }
 
           }
-
 
           signal = new q.Signal({ 
             points:[[new q.Point(this.config.color,this.config.effect)]],
@@ -143,14 +146,13 @@ class MojoHelpdesk extends q.DesktopApp {
               label: 'Show in Mojo Helpdesk',
             }
           });
+
+          this.updateUrlWithRightTime();
+          logger.info("serviceUrl AFTER UPDATE"+this.serviceUrl);
+      
+          return signal;
         }
 
-        this.updateUrlWithRightTime();
-
-        logger.info("serviceUrl AFTER UPDATE")
-        logger.info(this.serviceUrl)
-
-        return signal;
         
       })
       .catch(error => {
@@ -160,6 +162,15 @@ class MojoHelpdesk extends q.DesktopApp {
           'The Mojo Helpdesk service returned an error. Please check your API key and account.',
           `Detail: ${error.message}`]);
       });
+
+
+    }
+
+    this.updateUrlWithRightTime();
+    logger.info("serviceUrl AFTER UPDATE"+this.serviceUrl);
+
+    return signal;
+
   }
 
 }
