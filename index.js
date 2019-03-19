@@ -40,7 +40,7 @@ class MojoHelpdesk extends q.DesktopApp {
     logger.info("Initialisation.")
 
     return request.get({
-      url: `https://app.mojohelpdesk.net/api/v3/helpdesk?access_key=${this.authorization.apiKey}`,
+      url: `https://app.mojohelpdesk.com/api/v3/helpdesk?access_key=${this.authorization.apiKey}`,
       json: true
     }).then((body) => {
       logger.info("Let's configure the domain name.");
