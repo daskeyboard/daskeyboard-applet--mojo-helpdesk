@@ -39,8 +39,8 @@ class MojoHelpdesk extends q.DesktopApp {
 
     logger.info("Initialisation.")
 
-    request.get({
-      url: `https://app.mojohelpdesk.net/api/v3/helpdesk?access_key=${this.authorization.apiKey}`,
+    return request.get({
+      url: `https://app.mojohelpdesk.com/api/v3/helpdesk?access_key=${this.authorization.apiKey}`,
       json: true
     }).then((body) => {
       logger.info("Let's configure the domain name.");
@@ -68,9 +68,7 @@ class MojoHelpdesk extends q.DesktopApp {
           logger.error("Config issue.")
       }
   
-      logger.info("serviceUrl AFTER CONFIG")
-      logger.info(this.serviceUrl)
-      logger.info("INITAL CONFIG DOOOOOOOONNNNNNNNNNNE")
+      logger.info("serviceUrl AFTER CONFIG: "+this.serviceUrl)
     })
     .catch(error => {
       logger.error(
@@ -103,7 +101,7 @@ class MojoHelpdesk extends q.DesktopApp {
   async run() {
     let signal;
 
-    logger.info("Let's RUNNINNNNNNNNNNNNNNG.");
+    logger.info("Let's running.");
 
     logger.info("Aimed url: " + this.serviceUrl);
 
@@ -138,7 +136,7 @@ class MojoHelpdesk extends q.DesktopApp {
           }
         });
         this.updateUrlWithRightTime();
-        logger.info("serviceUrl AFTER UPDATE" + this.serviceUrl);
+        logger.info("serviceUrl AFTER UPDATE in run function: " + this.serviceUrl);
         return signal;
       }
     }
