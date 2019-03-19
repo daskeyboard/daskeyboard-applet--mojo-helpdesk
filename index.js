@@ -46,6 +46,31 @@ class MojoHelpdesk extends q.DesktopApp {
       logger.info("Let's configure the domain name.");
       this.domain = body.domain;
       logger.info("Got domain name: "+this.domain);
+
+      logger.info("Let's configure the serviceUrls, messages.")
+
+      switch(this.config.option){
+        case "nuut":
+          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'priority.id:\(\%3C=20\)%20AND%20created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+          this.message = "New unassigned urgent ticket.";
+          this.url = 'https://'+this.domain+'/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
+          break;
+        case "nut":
+          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+          this.message = "New unassigned ticket.";
+          this.url = 'https://'+this.domain+'/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
+          break;
+        case "ntatm":
+          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName.toLowerCase()+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+          this.message = "New ticket assigned to me.";
+          break;
+        default:
+          logger.error("Config issue.")
+      }
+  
+      logger.info("serviceUrl AFTER CONFIG")
+      logger.info(this.serviceUrl)
+      logger.info("INITAL CONFIG DOOOOOOOONNNNNNNNNNNE")
     })
     .catch(error => {
       logger.error(
@@ -55,29 +80,6 @@ class MojoHelpdesk extends q.DesktopApp {
         `Detail: ${error.message}`]);
     });
 
-    logger.info("Let's configure the serviceUrls, messages.")
-
-    switch(this.config.option){
-      case "nuut":
-        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'priority.id:\(\%3C=20\)%20AND%20created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
-        this.message = "New unassigned urgent ticket.";
-        this.url = 'https://'+this.domain+'/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
-        break;
-      case "nut":
-        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
-        this.message = "New unassigned ticket.";
-        this.url = 'https://'+this.domain+'/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
-        break;
-      case "ntatm":
-        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName.toLowerCase()+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
-        this.message = "New ticket assigned to me.";
-        break;
-      default:
-        logger.error("Config issue.")
-    }
-
-    logger.info("serviceUrl AFTER CONFIG")
-    logger.info(this.serviceUrl)
   }
 
   updateUrlWithRightTime(){
@@ -101,75 +103,52 @@ class MojoHelpdesk extends q.DesktopApp {
   async run() {
     let signal;
 
-    logger.info("Let's running.");
-    // if the domain is defined
-    logger.info(this.domain);
-    if(typeof this.domain === 'undefined'){
-      logger.info("The domain name is undefined.")
-    }else{
+    logger.info("Let's RUNNINNNNNNNNNNNNNNG.");
 
-      logger.info("Aimed url: " + this.serviceUrl);
+    logger.info("Aimed url: " + this.serviceUrl);
 
-      return request.get({
+    try {
+      const body = await request.get({
         url: this.serviceUrl,
         json: true
-      }).then((body) => {
-        logger.info("Looking for Mojo Helpdesk data");
-
-        // Test if there is something inside the response
-        var isBodyEmpty = isEmpty(body) || (body === "[]");
-
-        if(isBodyEmpty){
-
-          logger.info("No new tickets.")
-          signal = null;
-
-        }else{
-          logger.info("=====> New ticket available!")
-
-          for (let section of body) {
-            let ticket = section.ticket;
-            let assignedId = ticket.assigned_to_id;
-
-            if(this.config.option == "ntatm"){
-              this.url = `https://${this.domain}/ma/#/tickets/search?sort_field=updated_on&assignee_id=${assignedId}&status_id=10,20,30,40&page=1`
-            }
-
-          }
-
-          signal = new q.Signal({ 
-            points:[[new q.Point(this.config.color,this.config.effect)]],
-            name: "Mojo Helpdesk",
-            message: this.message,
-            link: {
-              url: this.url,
-              label: 'Show in Mojo Helpdesk',
-            }
-          });
-
-          this.updateUrlWithRightTime();
-          logger.info("serviceUrl AFTER UPDATE"+this.serviceUrl);
-      
-          return signal;
-        }
-
-        
-      })
-      .catch(error => {
-        logger.error(
-          `Got error sending request to service: ${JSON.stringify(error)}`);
-        return q.Signal.error([
-          'The Mojo Helpdesk service returned an error. Please check your API key and account.',
-          `Detail: ${error.message}`]);
       });
-
-
+      logger.info("Looking for Mojo Helpdesk data");
+      // Test if there is something inside the response
+      var isBodyEmpty = isEmpty(body) || (body === "[]");
+      if (isBodyEmpty) {
+        logger.info("No new tickets.");
+        signal = null;
+      }
+      else {
+        logger.info("=====> New ticket available!");
+        for (let section of body) {
+          let ticket = section.ticket;
+          let assignedId = ticket.assigned_to_id;
+          if (this.config.option == "ntatm") {
+            this.url = `https://${this.domain}/ma/#/tickets/search?sort_field=updated_on&assignee_id=${assignedId}&status_id=10,20,30,40&page=1`;
+          }
+        }
+        signal = new q.Signal({
+          points: [[new q.Point(this.config.color, this.config.effect)]],
+          name: "Mojo Helpdesk",
+          message: this.message,
+          link: {
+            url: this.url,
+            label: 'Show in Mojo Helpdesk',
+          }
+        });
+        this.updateUrlWithRightTime();
+        logger.info("serviceUrl AFTER UPDATE" + this.serviceUrl);
+        return signal;
+      }
     }
-
-    this.updateUrlWithRightTime();
-    logger.info("serviceUrl AFTER UPDATE"+this.serviceUrl);
-
-    return signal;
+    catch (error) {
+      logger.error(`Got error sending request to service: ${JSON.stringify(error)}`);
+      return q.Signal.error([
+        'The Mojo Helpdesk service returned an error. Please check your API key and account.',
+        `Detail: ${error.message}`
+      ]);
+    }
 
   }
 
