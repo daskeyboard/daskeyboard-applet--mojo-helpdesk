@@ -1,6 +1,6 @@
 # Q Applet: Mojo Helpdesk
 
-Displays tickets activity on a Das Keyboard Q Series.
+Displays new tickets activity on a Das Keyboard Q Series.
 
 Mojo Helpdesk is the #1 help desk & ticket tracking software to provide great customer support.
 
