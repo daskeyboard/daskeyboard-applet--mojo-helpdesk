@@ -54,20 +54,19 @@
     "questions": [
       {
         "key": "option",
-        "label": "What do you want?",
-        "help": "You can select what you want to be aware.",
+        "label": "Choose an alert",
         "required": true,
         "order": 1,
         "controlType": "dropdown",
-        "value": "nut",
+        "value": "nuut",
         "options": [
-          {
-            "key": "nut",
-            "value": "New unassigned ticket"
-          },
           {
             "key": "nuut",
             "value": "New unassigned urgent or emergency ticket"
+          },
+          {
+            "key": "nut",
+            "value": "New unassigned ticket"
           },
           {
             "key": "ntatm",
@@ -77,16 +76,15 @@
       },
       {
         "key": "firstName",
-        "label": "What is your first name?",
-        "help": "Enter your first name (lowercase).",
-        "placeholder": "fabien",
+        "help": "Enter your first name as displayed in your Mojo Helpdesk profile.",
+        "placeholder": "Type your first name",
         "required": true,
         "order": 2,
         "controlType": "textbox"
       },
       {
         "key": "color",
-        "label": "Choose the color of the reminder",
+        "label": "Select a color",
         "help": "",
         "required": true,
         "order": 3,
@@ -95,7 +93,7 @@
       },
       {
         "key": "effect",
-        "label": "Choose the effect of the reminder",
+        "label": "Select a notification effect",
         "help": "",
         "required": true,
         "order": 4,
