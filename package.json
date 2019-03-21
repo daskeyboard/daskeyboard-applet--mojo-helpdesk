@@ -75,9 +75,9 @@
         ]
       },
       {
-        "key": "firstName",
-        "help": "Enter your first name as displayed in your Mojo Helpdesk profile.",
-        "placeholder": "Type your first name",
+        "key": "email",
+        "help": "Your email allows to get your tickets.",
+        "placeholder": "Enter your email as shown in your profile",
         "required": true,
         "order": 2,
         "controlType": "textbox"
