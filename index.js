@@ -61,7 +61,7 @@ class MojoHelpdesk extends q.DesktopApp {
           this.url = 'https://'+this.domain+'/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
           break;
         case "ntatm":
-          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName.toLowerCase()+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.email:\("'+this.config.email+'"\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
           this.message = "New ticket assigned to me.";
           break;
         default:
@@ -90,7 +90,7 @@ class MojoHelpdesk extends q.DesktopApp {
         this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         break;
       case "ntatm":
-        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.name:\('+this.config.firstName.toLowerCase()+'\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.email:\("'+this.config.email+'"\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         break;
       default:
         logger.error("Config issue.")
@@ -101,16 +101,15 @@ class MojoHelpdesk extends q.DesktopApp {
   async run() {
     let signal;
 
-    logger.info("Let's running.");
-
-    logger.info("Aimed url: " + this.serviceUrl);
-
     try {
       const body = await request.get({
         url: this.serviceUrl,
         json: true
       });
+
       logger.info("Looking for Mojo Helpdesk data");
+      logger.info("Aimed url: " + this.serviceUrl);
+
       // Test if there is something inside the response
       var isBodyEmpty = isEmpty(body) || (body === "[]");
       if (isBodyEmpty) {
