@@ -61,7 +61,7 @@ class MojoHelpdesk extends q.DesktopApp {
           this.message = "New unassigned ticket.";
           this.url = 'https://'+this.domain+'/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
           break;
-        case "nuoatatm":
+        case "ntatm":
           this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.email:\("'+this.config.email+'"\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
           this.message = "New update on a ticket.";
           break;
@@ -90,7 +90,7 @@ class MojoHelpdesk extends q.DesktopApp {
       case "nut":
         this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         break;
-      case "nuoatatm":
+      case "ntatm":
         this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.email:\("'+this.config.email+'"\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
         break;
       default:
@@ -122,7 +122,7 @@ class MojoHelpdesk extends q.DesktopApp {
         for (let section of body) {
           let ticket = section.ticket;
           let assignedId = ticket.assigned_to_id;
-          if (this.config.option == "nuoatatm") {
+          if (this.config.option == "ntatm") {
             this.url = `https://${this.domain}/ma/#/tickets/search?sort_field=updated_on&assignee_id=${assignedId}&status_id=10,20,30,40&page=1`;
           }
         }
