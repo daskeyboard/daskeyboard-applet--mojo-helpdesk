@@ -69,15 +69,15 @@
             "value": "New unassigned ticket"
           },
           {
-            "key": "ntatm",
-            "value": "New ticket assigned to me"
+            "key": "nuoatatm",
+            "value": "New update on a ticket assigned to an agent"
           }
         ]
       },
       {
         "key": "email",
-        "help": "Your email is needed to identify your tickets.",
-        "placeholder": "Enter your email as shown in your profile",
+        "help": "Agent email is needed to identify his tickets.",
+        "placeholder": "Enter email as shown in the agent profile",
         "required": true,
         "order": 2,
         "controlType": "textbox"
