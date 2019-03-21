@@ -1,7 +1,7 @@
 {
   "name": "daskeyboard-applet--mojo-helpdesk",
   "displayName": "Mojo Helpdesk",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Displays new tickets activity.",
   "longDescription": "Keep an eye on the ticket activity on your Q keyboard!",
   "officialProductName": "Mojo Helpdesk",
@@ -69,14 +69,14 @@
             "value": "New unassigned ticket"
           },
           {
-            "key": "nuoatatm",
-            "value": "New update on a ticket assigned to an agent"
+            "key": "ntatm",
+            "value": "New assignments and updates on assigned tickets"
           }
         ]
       },
       {
         "key": "email",
-        "help": "Agent email is needed to identify his tickets.",
+        "help": "Agent email is needed to identify her/his tickets.",
         "placeholder": "Enter email as shown in the agent profile",
         "required": true,
         "order": 2,
