@@ -76,7 +76,7 @@
       },
       {
         "key": "email",
-        "help": "Your email allows to get your tickets.",
+        "help": "Your email is needed to identify your tickets.",
         "placeholder": "Enter your email as shown in your profile",
         "required": true,
         "order": 2,
