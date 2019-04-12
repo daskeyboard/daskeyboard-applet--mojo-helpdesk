@@ -38,7 +38,7 @@ class MojoHelpdesk extends q.DesktopApp {
 
   async applyConfig() {
 
-    logger.info("Initialisation.")
+    logger.info("Mojo initialisation.")
 
     return request.get({
       url: `https://app.mojohelpdesk.com/api/v3/helpdesk?access_key=${this.authorization.apiKey}`,
@@ -74,9 +74,6 @@ class MojoHelpdesk extends q.DesktopApp {
     .catch(error => {
       logger.error(
         `Got error sending request to service: ${JSON.stringify(error)}`);
-      return q.Signal.error([
-        'The Mojo Helpdesk service returned an error. Please check your API key and account.',
-        `Detail: ${error.message}`]);
     });
 
   }
@@ -108,17 +105,15 @@ class MojoHelpdesk extends q.DesktopApp {
         json: true
       });
 
-      logger.info("Looking for Mojo Helpdesk data");
-      logger.info("Aimed url: " + this.serviceUrl);
+      logger.info("Mojo Helpdesk running");
 
       // Test if there is something inside the response
       var isBodyEmpty = isEmpty(body) || (body === "[]");
       if (isBodyEmpty) {
-        logger.info("No new tickets.");
         signal = null;
       }
       else {
-        logger.info("Get an update from Mojo API");
+        logger.info("Got a Mojo update");
         for (let section of body) {
           let ticket = section.ticket;
           let assignedId = ticket.assigned_to_id;
@@ -142,8 +137,13 @@ class MojoHelpdesk extends q.DesktopApp {
     }
     catch (error) {
       logger.error(`Got error sending request to service: ${JSON.stringify(error)}`);
+      if(`${error.message}`.includes("getaddrinfo")){
+        return q.Signal.error(
+          'The Mojo Helpdesk service returned an error. <b>Please check your internet connection</b>.'
+        );
+      }
       return q.Signal.error([
-        'The Mojo Helpdesk service returned an error. Please check your API key and account.',
+        'The Mojo Helpdesk service returned an error. <b>Please check your API key and account</b>.',
         `Detail: ${error.message}`
       ]);
     }
