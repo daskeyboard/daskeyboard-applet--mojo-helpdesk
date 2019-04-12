@@ -1,7 +1,7 @@
 {
   "name": "daskeyboard-applet--mojo-helpdesk",
   "displayName": "Mojo Helpdesk",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Displays new tickets activity.",
   "longDescription": "Keep an eye on the ticket activity on your Q keyboard!",
   "officialProductName": "Mojo Helpdesk",
@@ -89,7 +89,7 @@
         "required": true,
         "order": 3,
         "controlType": "color",
-        "value": "#ff0000"
+        "value": "#2b70a9"
       },
       {
         "key": "effect",
