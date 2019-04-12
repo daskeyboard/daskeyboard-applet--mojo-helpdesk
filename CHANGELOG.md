@@ -8,3 +8,7 @@ first name (which can be used several times).
 #### 2.0.1 (2019-03-21)
 Changed ticket assigned to me to new update on
 assigned ticket and new assignment.
+
+#### 2.0.2 (2019-04-12)
+Put default color value, in the configuration, to blue Mojo.
+Handled error when the user lost his internet connection.
