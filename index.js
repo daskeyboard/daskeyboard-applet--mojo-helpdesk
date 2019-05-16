@@ -99,13 +99,13 @@ class MojoHelpdesk extends q.DesktopApp {
   async run() {
     let signal;
 
+    logger.info("Mojo Helpdesk running.");
+
     try {
       const body = await request.get({
         url: this.serviceUrl,
         json: true
       });
-
-      logger.info("Mojo Helpdesk running");
 
       // Test if there is something inside the response
       var isBodyEmpty = isEmpty(body) || (body === "[]");
