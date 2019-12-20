@@ -132,8 +132,8 @@ class MojoHelpdesk extends q.DesktopApp {
         });
         this.updateUrlWithRightTime();
         logger.info("serviceUrl AFTER UPDATE in run function: " + this.serviceUrl);
-        return signal;
       }
+      return signal;
     }
     catch (error) {
       logger.error(`Got error sending request to service: ${JSON.stringify(error)}`);
