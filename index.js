@@ -1,5 +1,6 @@
 // Library to send signal to Q keyboards
 const q = require('daskeyboard-applet');
+const Effects = q.Effects;
 
 // Library to send request to API
 const request = require('request-promise');
@@ -20,9 +21,9 @@ function getUtcTime() {
 
 // Test if an object is empty
 function isEmpty(obj) {
-  for(var key in obj) {
-      if(obj.hasOwnProperty(key))
-          return false;
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key))
+      return false;
   }
   return true;
 }
@@ -46,49 +47,49 @@ class MojoHelpdesk extends q.DesktopApp {
     }).then((body) => {
       logger.info("Let's configure the domain name.");
       this.domain = body.domain;
-      logger.info("Got domain name: "+this.domain);
+      logger.info("Got domain name: " + this.domain);
 
       logger.info("Let's configure the serviceUrls, messages.")
 
-      switch(this.config.option){
+      switch (this.config.option) {
         case "nuut":
-          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'priority.id:\(\%3C=20\)%20AND%20created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'priority.id:\(\%3C=20\)%20AND%20created_on:[' + getUtcTime() + '%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key=' + this.authorization.apiKey;
           this.message = "New unassigned urgent ticket.";
-          this.url = 'https://'+this.domain+'/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
+          this.url = 'https://' + this.domain + '/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
           break;
         case "nut":
-          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'created_on:[' + getUtcTime() + '%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key=' + this.authorization.apiKey;
           this.message = "New unassigned ticket.";
-          this.url = 'https://'+this.domain+'/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
+          this.url = 'https://' + this.domain + '/ma/#/tickets/search?sort_field=updated_on&assignee_id=0&status_id=10,20,30,40&page=1'
           break;
         case "ntatm":
-          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.email:\("'+this.config.email+'"\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+          this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:[' + getUtcTime() + '%20TO%20*]%20AND%20assignee.email:\("' + this.config.email + '"\)\&sf=created_on&r=1&access_key=' + this.authorization.apiKey;
           this.message = "New update on a ticket.";
           break;
         default:
           logger.error("Config issue.")
       }
-  
-      logger.info("serviceUrl AFTER CONFIG: "+this.serviceUrl)
+
+      logger.info("serviceUrl AFTER CONFIG: " + this.serviceUrl)
     })
-    .catch(error => {
-      logger.error(
-        `Got error sending request to service: ${JSON.stringify(error)}`);
-    });
+      .catch(error => {
+        logger.error(
+          `Got error sending request to service: ${JSON.stringify(error)}`);
+      });
 
   }
 
-  updateUrlWithRightTime(){
+  updateUrlWithRightTime() {
     logger.info("Let's update the url with the right time.")
-    switch(this.config.option){
+    switch (this.config.option) {
       case "nuut":
-        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'priority.id:\(\%3C=20\)%20AND%20created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'priority.id:\(\%3C=20\)%20AND%20created_on:[' + getUtcTime() + '%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key=' + this.authorization.apiKey;
         break;
       case "nut":
-        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'created_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'created_on:[' + getUtcTime() + '%20TO%20*]%20AND%20assignee.id:\(\%3C=0\)\&sf=created_on&r=1&access_key=' + this.authorization.apiKey;
         break;
       case "ntatm":
-        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:['+getUtcTime()+'%20TO%20*]%20AND%20assignee.email:\("'+this.config.email+'"\)\&sf=created_on&r=1&access_key='+this.authorization.apiKey;
+        this.serviceUrl = baseUrl1 + this.domain + baseUrl2 + 'updated_on:[' + getUtcTime() + '%20TO%20*]%20AND%20assignee.email:\("' + this.config.email + '"\)\&sf=created_on&r=1&access_key=' + this.authorization.apiKey;
         break;
       default:
         logger.error("Config issue.")
@@ -111,7 +112,7 @@ class MojoHelpdesk extends q.DesktopApp {
       var isBodyEmpty = isEmpty(body) || (body === "[]");
       if (isBodyEmpty) {
         signal = new q.Signal({
-          points: [[new q.Point(['#FFFFFF')]],
+          points: [[new q.Point(['#00FF00', Effects.SET_COLOR])]],
           name: "Mojo Helpdesk",
           message: "No update."
         });
@@ -141,12 +142,12 @@ class MojoHelpdesk extends q.DesktopApp {
     }
     catch (error) {
       logger.error(`Got error sending request to service: ${JSON.stringify(error)}`);
-      if(`${error.message}`.includes("getaddrinfo")){
+      if (`${error.message}`.includes("getaddrinfo")) {
         // Do not send signal when getting internet connection error
         // return q.Signal.error(
         //   'The Mojo Helpdesk service returned an error. <b>Please check your internet connection</b>.'
         // );
-      }else{
+      } else {
         return q.Signal.error([
           'The Mojo Helpdesk service returned an error. <b>Please check your API key and account</b>.',
           `Detail: ${error.message}`
