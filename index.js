@@ -110,7 +110,11 @@ class MojoHelpdesk extends q.DesktopApp {
       // Test if there is something inside the response
       var isBodyEmpty = isEmpty(body) || (body === "[]");
       if (isBodyEmpty) {
-        signal = null;
+        signal = new q.Signal({
+          points: [[new q.Point(['#FFFFFF')]],
+          name: "Mojo Helpdesk",
+          message: "No update."
+        });
       }
       else {
         logger.info("Got a Mojo update");
@@ -132,8 +136,8 @@ class MojoHelpdesk extends q.DesktopApp {
         });
         this.updateUrlWithRightTime();
         logger.info("serviceUrl AFTER UPDATE in run function: " + this.serviceUrl);
-        return signal;
       }
+      return signal;
     }
     catch (error) {
       logger.error(`Got error sending request to service: ${JSON.stringify(error)}`);
